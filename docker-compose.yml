@@ -1,0 +1,29 @@
+version: "3"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    env_file:
+      - ./docker/app/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    command:
+      [
+        "/usr/local/bin/go-backend/wait-mysql.sh",
+        "db",
+        "/usr/local/bin/go-backend/init-db.sh",
+      ]
+
+  db:
+    build: ./docker/db/
+    environment:
+      MYSQL_ROOT_PASSWORD: p@ssword
+      MYSQL_DATABASE: go-db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - 3306:3306
+    restart: always
